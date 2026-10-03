@@ -1,0 +1,12 @@
+.venv/
+__pycache__/
+*.pyc
+pipeline_outputs/
+.streamlit/
+node_modules/
+dist/
+*.onnx
+*.onnx.data
+*.pth
+*.pt
+.env

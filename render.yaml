@@ -1,0 +1,37 @@
+services:
+  - type: web
+    name: tomato-onnx-backend
+    runtime: python
+    plan: free
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: GATE_MODEL_URL
+        sync: false
+      - key: GATE_MODEL_DATA_URL
+        sync: false
+      - key: DETECT_MODEL_URL
+        sync: false
+      - key: DISEASE_MODEL_URL
+        sync: false
+      - key: DISEASE_MODEL_DATA_URL
+        sync: false
+
+  - type: web
+    name: tomato-onnx-frontend
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_BACKEND_URL
+        fromService:
+          type: web
+          name: tomato-onnx-backend
+          envVarKey: RENDER_EXTERNAL_URL
